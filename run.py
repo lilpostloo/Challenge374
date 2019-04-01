@@ -22,37 +22,71 @@ def fillColumn(grid,col):
         grid[i][col] = 1
     return grid 
 
-#checks for and fills rows or cols which are all on
+#checks for full rows and cols and fills grid accordingly
 def checkForWholeLines(grid,width,height,columns,rows):
-    for col,x in enumerate(eval('['+columns+']')):
-        if str(x) == str(height):
-            grid = fillColumn(grid,col)
+    for i,x in enumerate(columns):
+        if len(x)==1 and int(x[0]) == int(height):
+            grid = fillColumn(grid,i)
+            columns[i] = [0]
 
-    for row,x in enumerate(eval('['+rows+']')):
-        if str(x) == str(width):
-            grid[row] = [1]*width
+    for i,x in enumerate(rows):
+        if len(x)==1 and int(x[0]) == int(width):
+            grid[i] = [1]*width
+            rows[i] = [0]
 
+    return grid,columns,rows
+
+ 
+def deduce(grid,columns,rows):
+    for i,col in enumerate(columns):
+        colSegsCount = len(col)
+        #print(colSegs) 
+        for j, colSegValue in enumerate(col):
+            #print(colSegValue)
+            grid,rows = substractFromRow(grid,rows,colSegValue,i,j)
     return grid
 
 
-def main(inputs):
+
+
+
+
+
+
+def run(inputs):
     width, height, columns, rows = inputs.split("\n")
     width, height = int(width), int(height)
+    columns = [[int(y) for y in x.split(",")] for x in columns[1:-1].split('","')]
+    rows = [[int(y) for y in x.split(",")] for x in rows[1:-1].split('","')]
     grid = gridArray(width,height)
-    grid = checkForWholeLines(grid,width,height,columns,rows)
+    #grid,columns,rows = checkForWholeLines(grid,width,height,columns,rows)
+    grid = deduce(grid,columns,rows)
     return drawGrid(grid)
     #return 'done'
 
-print(main('''5
+
+print(run('''5
 5
 "5","2,2","1,1","2,2","5"
 "5","2,2","1,1","2,2","5"'''))
 
-print(main('''8
+print(run('''8
 11
 "0","9","9","2,2","2,2","4","4","0"
 "0","4","6","2,2","2,2","6","4","2","2","2","0"'''))
 '''
+
+ ****   
+ ****** 
+ **  ** 
+ **  ** 
+ ****** 
+ ****   
+ **     
+ **     
+ **   
+"0","9","9","2,2","2,2","4","4","0"
+"0","4","6","2,2","2,2","6","4","2","2","2","0"
 
 "0","0","9","2,2","2,2","4","4","0"
 "0","3","5","1,2","1,2","5","3","1","1","1","0"
